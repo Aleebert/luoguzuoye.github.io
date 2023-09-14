@@ -1,0 +1,21 @@
+import requests  
+from bs4 import BeautifulSoup  
+  
+# 构造URL  
+url = "https://www.luogu.com.cn/problem/list?page=1&difficulty=1"  
+  
+# 发送请求  
+response = requests.get(url)  
+  
+# 解析HTML  
+soup = BeautifulSoup(response.text, "html.parser")  
+  
+# 获取题目列表  
+problem_list = soup.find("div", {"class": "problem-list"}).find_all("div", {"class": "problem"})  
+  
+# 打印题目名称和链接  
+for problem in problem_list:  
+    problem_name = problem.find("a").text  
+    problem_link = problem.find("a")["href"]  
+    print(f"{problem_name}:\nhttps://www.luogu.com.cn{problem_link}\n")
+#该代码通过构造URL，发送HTTP请求，并使用BeautifulSoup库解析HTML页面，获取题目列表。然后遍历题目列表，打印每个题目的名称和链接。注意，该代码只爬取了第一页的题目，如果需要爬取更多页，需要修改URL中的page参数
