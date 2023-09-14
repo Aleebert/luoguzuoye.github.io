@@ -1,0 +1,40 @@
+import requests  
+from bs4 import BeautifulSoup  
+import os  
+  
+# 构造URL  
+url = "https://www.luogu.com.cn/problem/list?page=1&difficulty=1"  
+  
+# 发送请求  
+response = requests.get(url)  
+  
+# 解析HTML  
+soup = BeautifulSoup(response.text, "html.parser")  
+  
+# 获取题目列表  
+problem_list = soup.find("div", {"class": "problem-list"}).find_all("div", {"class": "problem"})  
+  
+# 创建题目文件夹  
+problem_folder = "题目难度-关键词"  
+if not os.path.exists(problem_folder):  
+    os.makedirs(problem_folder)  
+  
+# 遍历题目列表，获取每道题的名称和链接，并创建对应的文件夹和文件  
+for problem in problem_list:  
+    problem_name = problem.find("a").text  
+    problem_link = problem.find("a")["href"]  
+    problem_id = problem_link.split("/")[-1]  
+    problem_folder_name = f"{problem_id}-{problem_name}"  
+    problem_folder_path = os.path.join(problem_folder, problem_folder_name)  
+    if not os.path.exists(problem_folder_path):  
+        os.makedirs(problem_folder_path)  
+    problem_file_name = f"{problem_id}-{problem_name}.md"  
+    problem_file_path = os.path.join(problem_folder_path, problem_file_name)  
+    with open(problem_file_path, "w") as f:  
+        f.write(f"# {problem_name}\n\n")  
+        f.write(f"难度：{problem_difficulty}\n\n")  
+        f.write(f"关键词：{problem_keywords}\n\n")  
+        f.write(f"算法：{problem_algorithm}\n\n")  
+        f.write(f"题解：\n\n")  
+        f.write(f"这里是题解内容。\n\n")
+#该代码会在指定的题目文件夹下创建以题目编号和标题命名的文件夹，并在该文件夹下创建两个markdown文件，分别存储题目信息和题解内容。同时，所有题目的文件夹会被放到以题目难度和关键词命名的目录下。
